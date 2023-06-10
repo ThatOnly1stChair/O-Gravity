@@ -16,8 +16,8 @@ public class CameraSwtichController : MonoBehaviour
     {
         topViewCam.SetActive(true);
         GarryCam.SetActive(false);
-        LarryController.GetComponent<LarryController>().enabled = false;
-        GarryController.GetComponent<CharacterMover>().enabled = true;
+        LarryController.GetComponent<LarryController>().enabled = true;
+        GarryController.GetComponent<CharacterMover>().enabled = false;
         topCam = true;
     }
     
