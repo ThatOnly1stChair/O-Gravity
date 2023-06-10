@@ -8,6 +8,7 @@ public class LarryController : MonoBehaviour
     Vector3 move;
     public float speed = 10f;
     public float border = 35f;
+    public float height;
     float xDomain;
     float zDomain;
     float buffer;
@@ -17,7 +18,7 @@ public class LarryController : MonoBehaviour
     void Start()
     {
         buffer = border - 0.2f;
-        transform.position = new Vector3(border, 2.9f, -border);
+        transform.position = new Vector3(border, height, -border);
     }
 
     // Update is called once per frame
