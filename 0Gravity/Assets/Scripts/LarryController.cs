@@ -13,12 +13,14 @@ public class LarryController : MonoBehaviour
     float zDomain;
     float buffer;
     public GameObject spotlight;
+    Light light;
 
     // Start is called before the first frame update
     void Start()
     {
         buffer = border - 0.2f;
         transform.position = new Vector3(border, height, -border);
+        light = spotlight.GetComponent<Light>();
     }
 
     // Update is called once per frame
@@ -71,30 +73,56 @@ public class LarryController : MonoBehaviour
         }
 
         //Rotates camera based on position
-        if(transform.position == new Vector3(35f, 0f, -35f))
-        {
-            spotlight.transform.rotation = Quaternion.Euler(0f, -45f, 0f);
-        } else if(transform.position == new Vector3(35f, 0f, 35f))
-        {
-            spotlight.transform.rotation = Quaternion.Euler(0f, -135f, 0f);
-        } else if (transform.position == new Vector3(-35f, 0f, 35f))
-        {
-            spotlight.transform.rotation = Quaternion.Euler(0f, 135f, 0f);
-        } else if (transform.position == new Vector3(-35f, 0f, -35f))
-        {
-            spotlight.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
-        } else if(transform.position.x == border)
-        {
-            spotlight.transform.rotation = Quaternion.Euler(0f, -90f, 0f);
-        } else if(transform.position.x == -border)
+        if (transform.position.x == -border)
         {
             spotlight.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-        } else if(transform.position.z == border)
+            light.spotAngle = 30f;
+            light.intensity = 8f;
+        }
+        else if (transform.position.z == border)
         {
             spotlight.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-        } else if (transform.position.z == -border)
+            light.spotAngle = 30f;
+            light.intensity = 8f;
+        }
+        else if (transform.position.z == -border)
         {
             spotlight.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            light.spotAngle = 30f;
+            light.intensity = 8f;
         }
+        else if (transform.position.x == border)
+        {
+            spotlight.transform.rotation = Quaternion.Euler(0f, -90f, 0f);
+            light.spotAngle = 30f;
+            light.intensity = 8f;
+        }
+        if (transform.position.x <= -border && transform.position.z <= -border)
+        {
+            spotlight.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
+            light.spotAngle = 12f;
+            light.intensity = 24f;
+        }
+        if (transform.position.x >= border && transform.position.z <= -border)
+        {
+            spotlight.transform.rotation = Quaternion.Euler(0f, -45f, 0f);
+            light.spotAngle = 12f;
+            light.intensity = 24f;
+        }
+        
+        if (transform.position.x >= border && transform.position.z >= border)
+        {
+            spotlight.transform.rotation = Quaternion.Euler(0f, -135f, 0f);
+            light.spotAngle = 12f;
+            light.intensity = 24f;
+        }
+        
+        if (transform.position.x <= -border && transform.position.z >= border)
+        {
+            spotlight.transform.rotation = Quaternion.Euler(0f, 135f, 0f);
+            light.spotAngle = 12f;
+            light.intensity = 24f;
+        }
+           
     }
 }

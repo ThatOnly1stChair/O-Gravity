@@ -124,9 +124,10 @@ public class CharacterMover : MonoBehaviour
             heldObjectRB.constraints = RigidbodyConstraints.None;
             heldObjectRB.transform.parent = null;
             heldObject = null;
+            rayRange = 2.5f;
             holding = false;
         }
-        else if (interactableReal == true)
+        if (interactableReal == true)
         {
             //Grabs onto the object in range of ray
             if (Input.GetButtonDown("Interact") && holding == false)
@@ -139,6 +140,7 @@ public class CharacterMover : MonoBehaviour
                     //heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
                     heldObjectRB.transform.parent = holdArea;
                     heldObject = hitObj;
+                    rayRange = 0.01f;
                     holding = true;
                 }
                 
