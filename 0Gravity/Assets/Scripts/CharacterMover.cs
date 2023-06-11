@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterMover : MonoBehaviour
 {
     public CharacterController controller;
+    
 
     //Variables
     public float moveSpeed = 12f;
@@ -21,12 +22,12 @@ public class CharacterMover : MonoBehaviour
     public Camera GarryCamera;
 
     //Used to rotate the body with the camera
-    public float mouseSensitivity;
+    public float mouseSensitivity = 100f;
     public Transform playerBody;
     float xRotation = 0f;
 
     //For setting up raycast for item interaction
-    float rayRange = 2f;
+    float rayRange = 2.5f;
     public LayerMask layerToHit;
     bool interactableReal = false;
     public Transform holdArea;
@@ -39,11 +40,22 @@ public class CharacterMover : MonoBehaviour
     //For turning on/off the UI for interacting
     public GameObject interactText;
 
+    //For interacting with remote cameras
+    public GameObject CameraController;
+    CameraSwtichController cameraSwitchController;
+    public static bool NotGarryCam = false;
+    float tempMoveSpeed;
+    float tempMouseSens;
+
     // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        
+
+        //For connecting to remote cameras for puzzles/doors
+        tempMoveSpeed = moveSpeed;
+        tempMouseSens = mouseSensitivity;
+        cameraSwitchController = CameraController.GetComponent<CameraSwtichController>();
     }
 
     // Update is called once per frame
@@ -78,13 +90,16 @@ public class CharacterMover : MonoBehaviour
 
         GarryCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseX);
+        GoBackToGarry();
         ColliderCheck();
-        
+
+
     }
 
     //To see if interactable item is in front of camera and to interact with it
     void ColliderCheck()
     {
+
         Ray ray = new Ray(GarryCamera.transform.position, GarryCamera.transform.forward);
         Debug.DrawRay(GarryCamera.transform.position, GarryCamera.transform.forward * rayRange, Color.white);
         RaycastHit hit;
@@ -121,21 +136,65 @@ public class CharacterMover : MonoBehaviour
                     heldObjectRB = hitObj.GetComponent<Rigidbody>();
                     heldObjectRB.useGravity = false;
                     heldObjectRB.drag = 10;
-                    heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+                    //heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
                     heldObjectRB.transform.parent = holdArea;
                     heldObject = hitObj;
                     holding = true;
                 }
                 
                 //Picks up and holds onto slingshot
-                if (hitObj.tag == "Weapon")
+                else if (hitObj.tag == "Weapon")
                 {
                     hitObj.SetActive(false);
                     handshot.SetActive(true);
                 }
+                //For pressing button 
+                else if (hitObj.tag == "Button")
+                {
+                    ButtonScript buttonscript = hitObj.gameObject.GetComponent<ButtonScript>();
+                    buttonscript.ButtonPress();
+                }
+                //For pressing switch
+                else if (hitObj.tag == "Switch")
+                {
+                    SwitchScript buttonscript = hitObj.gameObject.GetComponent<SwitchScript>();
+                    buttonscript.SwitchPress();
+                }
+
+                //If at sliding door or thing with puzzle
+                //Goes into remote camera view
+                if (hitObj.tag == "Remote" && NotGarryCam == false)
+                {
+                    hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.SetActive(true);
+                    Camera cam = hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.GetComponent<Camera>();
+                    cameraSwitchController.SwitchCamera(cam);
+
+                    moveSpeed = 0.0f;
+                    mouseSensitivity = 0.0f;
+                    rayRange = 0.01f;
+                    NotGarryCam = true;
+                }
+                
             }
         }
         
     }
 
+    //So you can go back from 3rd person to 1st
+    void GoBackToGarry()
+    {
+        if (Input.GetButtonDown("Interact") && NotGarryCam == true)
+        {
+
+            hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.SetActive(true);
+            Camera cam = hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.GetComponent<Camera>();
+            cameraSwitchController.SwitchToGarry(cam);
+            //Instead of turning off the script, just make speed zero
+            moveSpeed = tempMoveSpeed;
+            mouseSensitivity = tempMouseSens;
+            rayRange = 2.5f;
+
+            NotGarryCam = false;
+        }
+    }
 }

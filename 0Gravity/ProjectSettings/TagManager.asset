@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Grabbable
   - Weapon
+  - Remote
+  - Button
+  - Switch
   layers:
   - Default
   - TransparentFX

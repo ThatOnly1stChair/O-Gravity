@@ -10,7 +10,11 @@ public class CameraSwtichController : MonoBehaviour
     //Link all gameobjects with controllers
     public GameObject LarryController;
     public GameObject GarryController;
-    bool topCam;
+    public bool topCam;
+
+    //Connect to garry's stats
+    float garrySpeed;
+    float garrySense;
 
     void Awake()
     {
@@ -19,6 +23,7 @@ public class CameraSwtichController : MonoBehaviour
         LarryController.GetComponent<LarryController>().enabled = true;
         GarryController.GetComponent<CharacterMover>().enabled = false;
         topCam = true;
+
     }
     
 
@@ -46,5 +51,29 @@ public class CameraSwtichController : MonoBehaviour
             }
             
         }
+        
+
+    }
+
+    public void SwitchCamera(Camera camera)
+    {
+        topViewCam.SetActive(false);
+        GarryCam.SetActive(false);
+        LarryController.GetComponent<LarryController>().enabled = false;
+        //GarryController.GetComponent<CharacterMover>().enabled = false;
+        topCam = false;
+
+    }
+
+    public void SwitchToGarry(Camera camera)
+    {
+        GarryCam.SetActive(true);
+        camera.gameObject.SetActive(false);
+        topViewCam.SetActive(false);
+        LarryController.GetComponent<LarryController>().enabled = false;
+        GarryController.GetComponent<CharacterMover>().enabled = true;
+        topCam = false;
+
+        
     }
 }
