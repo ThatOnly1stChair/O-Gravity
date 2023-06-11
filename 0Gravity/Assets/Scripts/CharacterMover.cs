@@ -18,17 +18,32 @@ public class CharacterMover : MonoBehaviour
 
     //For gravity and falling
     Vector3 velocity;
-    public GameObject GarryCamera;
+    public Camera GarryCamera;
 
     //Used to rotate the body with the camera
     public float mouseSensitivity;
     public Transform playerBody;
     float xRotation = 0f;
 
+    //For setting up raycast for item interaction
+    float rayRange = 2f;
+    public LayerMask layerToHit;
+    bool interactableReal = false;
+    public Transform holdArea;
+    private GameObject heldObject;
+    public GameObject handshot;
+    private Rigidbody heldObjectRB;
+    private GameObject hitObj;
+    bool holding = false;
+
+    //For turning on/off the UI for interacting
+    public GameObject interactText;
+
     // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        
     }
 
     // Update is called once per frame
@@ -63,5 +78,64 @@ public class CharacterMover : MonoBehaviour
 
         GarryCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseX);
+        ColliderCheck();
+        
     }
+
+    //To see if interactable item is in front of camera and to interact with it
+    void ColliderCheck()
+    {
+        Ray ray = new Ray(GarryCamera.transform.position, GarryCamera.transform.forward);
+        Debug.DrawRay(GarryCamera.transform.position, GarryCamera.transform.forward * rayRange, Color.white);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, rayRange, layerToHit))
+        {
+            //Debug.Log("Hit item!");
+            hitObj = hit.transform.gameObject;
+            interactText.SetActive(true);
+            interactableReal = true;
+        }
+        else
+        {
+            interactText.SetActive(false);
+            interactableReal = false;
+        }
+        //Button outputs
+        //Lets go of the held object
+        if (Input.GetButtonDown("Interact") && holding == true)
+        {
+            heldObjectRB.useGravity = true;
+            heldObjectRB.drag = 1;
+            heldObjectRB.constraints = RigidbodyConstraints.None;
+            heldObjectRB.transform.parent = null;
+            heldObject = null;
+            holding = false;
+        }
+        else if (interactableReal == true)
+        {
+            //Grabs onto the object in range of ray
+            if (Input.GetButtonDown("Interact") && holding == false)
+            {
+                if (hitObj.tag == "Grabbable")
+                {
+                    heldObjectRB = hitObj.GetComponent<Rigidbody>();
+                    heldObjectRB.useGravity = false;
+                    heldObjectRB.drag = 10;
+                    heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+                    heldObjectRB.transform.parent = holdArea;
+                    heldObject = hitObj;
+                    holding = true;
+                }
+                
+                //Picks up and holds onto slingshot
+                if (hitObj.tag == "Weapon")
+                {
+                    hitObj.SetActive(false);
+                    handshot.SetActive(true);
+                }
+            }
+        }
+        
+    }
+
 }
