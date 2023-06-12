@@ -103,7 +103,11 @@ public class CharacterMover : MonoBehaviour
         Ray ray = new Ray(GarryCamera.transform.position, GarryCamera.transform.forward);
         Debug.DrawRay(GarryCamera.transform.position, GarryCamera.transform.forward * rayRange, Color.white);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, rayRange, layerToHit))
+        if (Physics.Raycast(ray, out hit, rayRange, environmentLayer))
+        {
+
+        }
+        else if (Physics.Raycast(ray, out hit, rayRange, layerToHit))
         {
             //Debug.Log("Hit item!");
             hitObj = hit.transform.gameObject;
