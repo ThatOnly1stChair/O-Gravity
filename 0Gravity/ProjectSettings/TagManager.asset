@@ -9,6 +9,7 @@ TagManager:
   - Remote
   - Button
   - Switch
+  - bullet
   layers:
   - Default
   - TransparentFX

@@ -29,6 +29,7 @@ public class CharacterMover : MonoBehaviour
     //For setting up raycast for item interaction
     float rayRange = 2.5f;
     public LayerMask layerToHit;
+    public LayerMask environmentLayer;
     bool interactableReal = false;
     public Transform holdArea;
     private GameObject heldObject;

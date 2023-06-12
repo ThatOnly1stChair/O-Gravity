@@ -14,6 +14,7 @@ public class ChasingScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Player = GameObject.Find("/Garry/Body");
         RB = gameObject.GetComponent<Rigidbody>();
     }
 
