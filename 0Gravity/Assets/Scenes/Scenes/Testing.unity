@@ -8308,7 +8308,7 @@ GameObject:
   - component: {fileID: 488749271}
   - component: {fileID: 488749270}
   m_Layer: 0
-  m_Name: Hint5
+  m_Name: Hint5.2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
