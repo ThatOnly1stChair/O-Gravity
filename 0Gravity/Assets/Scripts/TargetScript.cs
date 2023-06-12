@@ -15,7 +15,6 @@ public class TargetScript: MonoBehaviour
     //Get script from other gameobject
     public DoorOutput doorOutput;
     bool buttonPressed = false;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -25,11 +24,14 @@ public class TargetScript: MonoBehaviour
     
     // Update is called once per frame
     void OnTriggerEnter(Collider collider)
-    {
+    {   
+
         if (collider.gameObject.tag == "bullet")
         {
+            
             doorOutput.Trigger();
-            transform.position += new Vector3(0.0f, 1.0f, 0.0f);
+            transform.position += new Vector3(0.0f, 10.0f, 0.0f); 
+            
         }
     }
 
