@@ -63,5 +63,120 @@ public class CharacterMover : MonoBehaviour
 
         GarryCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseX);
+<<<<<<< Updated upstream
+=======
+        GoBackToGarry();
+        ColliderCheck();
+
+
+    }
+
+    //To see if interactable item is in front of camera and to interact with it
+    void ColliderCheck()
+    {
+
+        Ray ray = new Ray(GarryCamera.transform.position, GarryCamera.transform.forward);
+        Debug.DrawRay(GarryCamera.transform.position, GarryCamera.transform.forward * rayRange, Color.white);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, rayRange, 0))
+        {
+
+        }
+        else if (Physics.Raycast(ray, out hit, rayRange, layerToHit))
+        {
+            //Debug.Log("Hit item!");
+            hitObj = hit.transform.gameObject;
+            interactText.SetActive(true);
+            interactableReal = true;
+        }
+        else
+        {
+            interactText.SetActive(false);
+            interactableReal = false;
+        }
+        //Button outputs
+        //Lets go of the held object
+        if (Input.GetButtonDown("Interact") && holding == true)
+        {
+            heldObjectRB.useGravity = true;
+            heldObjectRB.drag = 1;
+            heldObjectRB.constraints = RigidbodyConstraints.None;
+            heldObjectRB.transform.parent = null;
+            heldObject = null;
+            rayRange = 2.5f;
+            holding = false;
+        }
+        else if (interactableReal == true)
+        {
+            //Grabs onto the object in range of ray
+            if (Input.GetButtonDown("Interact") && holding == false)
+            {
+                if (hitObj.tag == "Grabbable")
+                {
+                    heldObjectRB = hitObj.GetComponent<Rigidbody>();
+                    heldObjectRB.useGravity = false;
+                    heldObjectRB.drag = 10;
+                    //heldObjectRB.constraints = RigidbodyConstraints.FreezeRotation;
+                    heldObjectRB.transform.parent = holdArea;
+                    heldObject = hitObj;
+                    rayRange = 0.01f;
+                    holding = true;
+                }
+                
+                //Picks up and holds onto slingshot
+                else if (hitObj.tag == "Weapon")
+                {
+                    hitObj.SetActive(false);
+                    handshot.SetActive(true);
+                }
+                //For pressing button 
+                else if (hitObj.tag == "Button")
+                {
+                    ButtonScript buttonscript = hitObj.gameObject.GetComponent<ButtonScript>();
+                    buttonscript.ButtonPress();
+                }
+                //For pressing switch
+                else if (hitObj.tag == "Switch")
+                {
+                    SwitchScript buttonscript = hitObj.gameObject.GetComponent<SwitchScript>();
+                    buttonscript.SwitchPress();
+                }
+
+                //If at sliding door or thing with puzzle
+                //Goes into remote camera view
+                if (hitObj.tag == "Remote" && NotGarryCam == false)
+                {
+                    hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.SetActive(true);
+                    Camera cam = hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.GetComponent<Camera>();
+                    cameraSwitchController.SwitchCamera(cam);
+
+                    moveSpeed = 0.0f;
+                    mouseSensitivity = 0.0f;
+                    rayRange = 0.01f;
+                    NotGarryCam = true;
+                }
+                
+            }
+        }
+        
+    }
+
+    //So you can go back from 3rd person to 1st
+    void GoBackToGarry()
+    {
+        if (Input.GetButtonDown("Interact") && NotGarryCam == true)
+        {
+
+            hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.SetActive(true);
+            Camera cam = hitObj.gameObject.transform.parent.transform.GetChild(0).gameObject.GetComponent<Camera>();
+            cameraSwitchController.SwitchToGarry(cam);
+            //Instead of turning off the script, just make speed zero
+            moveSpeed = tempMoveSpeed;
+            mouseSensitivity = tempMouseSens;
+            rayRange = 2.5f;
+
+            NotGarryCam = false;
+        }
+>>>>>>> Stashed changes
     }
 }
